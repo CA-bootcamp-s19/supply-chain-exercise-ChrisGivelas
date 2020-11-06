@@ -9,15 +9,15 @@ pragma solidity >=0.6.0 <0.7.0;
 contract SupplyChain {
 
   /* set owner */
-  address owner;
+  address public owner ;
 
   /* Add a variable called skuCount to track the most recent sku # */
-  uint skuCount;
+  uint public skuCount;
 
   /* Add a line that creates a public mapping that maps the SKU (a number) to an Item.
      Call this mappings items
   */
-  mapping (uint => Item) items;
+  mapping (uint => Item) public items;
 
   /* Add a line that creates an enum called State. This should have 4 states
     ForSale
@@ -52,10 +52,10 @@ contract SupplyChain {
     event LogReceived (uint indexed sku);
 
 /* Create a modifer that checks if the msg.sender is the owner of the contract */
-  modifier onlyOwner (address _addres) { require (msg.sender == owner); _;}
-  modifier verifyCaller (address _address) { require (msg.sender == _address); _;}
+  modifier onlyOwner () { require (msg.sender == owner, "Only the owner can call this"); _;}
+  modifier verifyCaller (address _address) { require (msg.sender == _address, "Incorrect caller"); _;}
 
-  modifier paidEnough(uint _price) { require(msg.value >= _price); _;}
+  modifier paidEnough(uint _price) { require(msg.value >= _price, "User did not pay enough"); _;}
   modifier checkValue(uint _sku) {
     //refund them after pay for item (why it is before, _ checks for logic before func)
     _;
@@ -76,13 +76,13 @@ contract SupplyChain {
   
   
   modifier forSale (Item memory item) { 
-    require (item.state == State.ForSale);
+    require (item.state == State.ForSale, "Item not for sale");
     require (item.seller != address(0)); 
     _;
   }
-  modifier sold (State state) { require (state == State.Sold); _;}
-  modifier shipped (State state) { require (state == State.Shipped); _;}
-  modifier received (State state) { require (state == State.Received); _;}
+  modifier sold (State state) { require (state == State.Sold, "Item not sold"); _;}
+  modifier shipped (State state) { require (state == State.Shipped, "Item not shipped"); _;}
+  modifier received (State state) { require (state == State.Received, "Item not received"); _;}
 
 
   constructor() public {
